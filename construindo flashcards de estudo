@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flashcards Agrinho - Alura / Paraná</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+body {
+font-family: 'Poppins', sans-serif;
+background: linear-gradient(135deg, #4CAF50, #2E7D32);
+margin: 0;
+padding: 20px;
+min-height: 100vh;
+color: #333;
+}
+
+.container {
+max-width: 800px;
+margin: 0 auto;
+}
+
+header {
+text-align: center;
+margin-bottom: 30px;
+color: white;
+}
+
+h1 {
+font-size: 2.5em;
+margin: 0;
+text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.subtitle {
+font-size: 1.2em;
+opacity: 0.9;
+}
+
+.flashcard-container {
+perspective: 1000px;
+margin: 30px auto;
+max-width: 600px;
+}
+
+.flashcard {
+position: relative;
+width: 100%;
+height: 380px;
+transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+transform-style: preserve-3d;
+cursor: pointer;
+border-radius: 20px;
+box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
+
+.flashcard.flipped {
+transform: rotateY(180deg);
+}
+
+.front, .back {
+position: absolute;
+width: 100%;
+height: 100%;
+backface-visibility: hidden;
+border-radius: 20px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+padding: 40px 30px;
+box-sizing: border-box;
+}
+
+.front {
+background: linear-gradient(145deg, #ffffff, #f0f8f0);
+}
+
+.back {
+background: linear-gradient(145deg, #E8F5E9, #C8E6C9);
+transform: rotateY(180deg);
+}
+
+.card-content {
+text-align: center;
+}
+
+.question {
+font-size: 1.4em;
+font-weight: 600;
+margin-bottom: 20px;
+color: #1B5E20;
+}
+
+.answer {
+font-size: 1.25em;
+line-height: 1.6;
+color: #33691E;
+}
+
+.controls {
+text-align: center;
+margin: 20px 0;
+}
+
+button {
+background: #1B5E20;
+color: white;
+border: none;
+padding: 12px 28px;
+margin: 0 10px;
+border-radius: 50px;
+font-size: 1.1em;
+cursor: pointer;
+transition: all 0.3s;
+}
+
+button:hover {
+background: #2E7D32;
+transform: translateY(-3px);
+}
+
+.progress {
+text-align: center;
+color: white;
+font-size: 1.1em;
+margin: 15px 0;
+}
+
+.deck-info {
+background: rgba(255,255,255,0.2);
+padding: 15px;
+border-radius: 15px;
+margin-bottom: 30px;
+color: white;
+text-align: center;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>🌱 Flashcards Agrinho</h1>
+<p class="subtitle">Estude sobre o Programa Agrinho - Paraná</p>
+<p style="font-size: 1em; margin-top: 10px;">Plataforma Alura • Educação no Campo</p>
+</header>
+
+<div class="deck-info">
+<strong>Como usar:</strong> Clique no cartão para virar. Use as setas ou botões para navegar.
+</div>
+
+<div id="flashcard-container" class="flashcard-container">
+<div id="flashcard" class="flashcard">
+<!-- Front -->
+<div class="front" id="front">
+<div class="card-content">
+<h2 style="color: #2E7D32; margin-bottom: 30px;">Pergunta</h2>
+<p id="question" class="question">Clique em "Próximo" para começar</p>
+</div>
+</div>
+<!-- Back -->
+<div class="back" id="back">
+<div class="card-content">
+<h2 style="color: #1B5E20; margin-bottom: 20px;">Resposta</h2>
+<p id="answer" class="answer"></p>
+</div>
+</div>
+</div>
+</div>
+
+<div class="controls">
+<button onclick="prevCard()">← Anterior</button>
+<button onclick="flipCard()">Virar Cartão</button>
+<button onclick="nextCard()">Próximo →</button>
+</div>
+
+<div class="progress">
+Cartão <span id="current">1</span> de <span id="total">0</span>
+</div>
+</div>
+
+<script>
+const flashcards = [
+{
+question: "O que é o Programa Agrinho?",
+answer: "O maior programa de responsabilidade social do Sistema FAEP/SENAR-PR. É uma parceria com o Governo do Paraná que leva educação sobre agro, sustentabilidade, saúde e segurança para escolas, principalmente do meio rural."
+},
+{
+question: "Em que ano o Agrinho foi criado?",
+answer: "Criado em 1995 e implementado em 1996. Em 2026 completa mais de 30 anos de atuação."
+},
+{
+question: "Quantos estudantes participam anualmente do Agrinho?",
+answer: "Cerca de 800 mil crianças e adolescentes da educação infantil, fundamental e especial, em todos os municípios do Paraná."
+},
+{
+question: "Qual é o tema do Agrinho 2026?",
+answer: "“Agro forte, futuro sustentável: equilíbrio entre produção e meio ambiente.”"
+},
+{
+question: "Quais são as principais categorias do Concurso Agrinho?",
+answer: "Redação, Desenho, Robótica, Programação, AgroRobótica, Relatório de Pesquisa, Experiência Pedagógica e Relatório Município Agrinho."
+},
+{
+question: "Qual é o objetivo principal do Agrinho?",
+answer: "Formar cidadãos conscientes, promover a sustentabilidade, a segurança no campo, o pensamento crítico e conectar o campo com a cidade através da educação."
+},
+{
+question: "Quem são os principais parceiros do Programa Agrinho?",
+answer: "Sistema FAEP, SENAR-PR, Secretaria de Educação (SEED-PR), Secretaria de Agricultura e outras secretarias do Governo do Paraná."
+},
+{
+question: "O que significa a Pedagogia da Pesquisa no Agrinho?",
+answer: "Os alunos e professores são protagonistas na construção do conhecimento, investigando temas reais de forma interdisciplinar e transdisciplinar."
+},
+{
+question: "O Agrinho é apenas para escolas rurais?",
+answer: "Não. Embora tenha foco no meio rural, o programa está presente em todas as escolas da rede pública e particular do Paraná."
+},
+{
+question: "Qual plataforma é mencionada para redações no Agrinho?",
+answer: "A plataforma Redação Paraná, que usa IA para correção e ajuda os alunos a melhorarem a escrita."
+}
+];
+
+let currentIndex = 0;
+let isFlipped = false;
+
+const card = document.getElementById('flashcard');
+const questionEl = document.getElementById('question');
+const answerEl = document.getElementById('answer');
+const currentEl = document.getElementById('current');
+const totalEl = document.getElementById('total');
+
+function updateCard() {
+questionEl.textContent = flashcards[currentIndex].question;
+answerEl.textContent = flashcards[currentIndex].answer;
+card.classList.remove('flipped');
+isFlipped = false;
+currentEl.textContent = currentIndex + 1;
+totalEl.textContent = flashcards.length;
+}
+
+function flipCard() {
+isFlipped = !isFlipped;
+card.classList.toggle('flipped', isFlipped);
+}
+
+function nextCard() {
+currentIndex = (currentIndex + 1) % flashcards.length;
+updateCard();
+}
+
+function prevCard() {
+currentIndex = (currentIndex - 1 + flashcards.length) % flashcards.length;
+updateCard();
+}
+
+// Clique no cartão para virar
+document.getElementById('flashcard-container').addEventListener('click', function(e) {
+// Evita que botões acionem o flip
+if (!e.target.closest('button')) {
+flipCard();
+}
+});
+
+// Teclas de navegação
+document.addEventListener('keydown', function(e) {
+if (e.key === " " || e.key === "Enter") {
+e.preventDefault();
+flipCard();
+} else if (e.key === "ArrowRight") {
+nextCard();
+} else if (e.key === "ArrowLeft") {
+prevCard();
+}
+});
+
+// Inicializar
+totalEl.textContent = flashcards.length;
+updateCard();
+</script>
+</body>
+</html>
